@@ -1,0 +1,12 @@
+# Ignore artifacts:
+node_modules
+.vscode
+.nuxt
+dist
+
+assets
+
+
+build
+coverage
+

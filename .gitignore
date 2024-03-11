@@ -1,0 +1,32 @@
+node_modules
+*.log*
+**/.DS_Store
+.nuxt
+.nitro
+.cache
+.output
+yarn.lock
+dist
+package-lock.json
+.vite-ssg-dist
+.vite-ssg-temp
+*.local
+dist
+dist-ssr
+
+
+# Archivos de variables locales
+.env.development
+.env.local
+.env
+
+# Directorios de editores y archivos
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
