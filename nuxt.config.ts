@@ -8,7 +8,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiUrl: `${process.env.BACKEND_REST_API_URL}`,
+      token: process.env.BACKEND_REST_API_TOKEN,
+      apiUrl: process.env.BACKEND_REST_API_URL,
     },
   },
   modules: [

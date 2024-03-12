@@ -12,16 +12,25 @@ import type {
 } from "~/types";
 
 const props = defineProps<{
-  onCreated?: () => {};
+  editBook?: IBook;
 }>();
 
-const emit = defineEmits(["close", "created"]);
+const emit = defineEmits(["close", "created", "updated"]);
 const close = () => emit("close");
 
-const config = useRuntimeConfig();
+const isEditMode = computed(() => (props.editBook ? true : false));
 
-const { data: pdfFiles, pending: loadingPdfFiles } =
-  useApiFetch<IHttpSuccessResponse<[IFile]>>("api/v1/files");
+const config = useRuntimeConfig();
+const pdfFiles = ref<string[]>();
+const { pending: loadingPdfFiles } = useApiFetch<[string]>("api/v1/files", {
+  onResponse: (r) => {
+    const array = r.response._data.data as [IFile];
+    const files = array.map(
+      (el) => `https://litterarum.onrender.com/api/v1/files/${el.basename}`
+    );
+    pdfFiles.value = files;
+  },
+});
 
 const { data: authors, pending: loadingAuthors } =
   useApiFetch<IHttpSuccessResponse<[IAuthor]>>("api/v1/authors");
@@ -32,7 +41,7 @@ const { data: tags, pending: loadingTags } =
 const { handleSubmit, setValues } = useForm<IBook>({
   initialValues: {
     title: "",
-    subtitle: "",
+    // subtitle: "",
     description: "",
     // basename: "",
     coverUrl: "",
@@ -46,24 +55,22 @@ const { handleSubmit, setValues } = useForm<IBook>({
     pdfFile: "",
     // ePubFile?: string;
     publicationDate: "", // 431-213 BC, 1982
-    isbn: "",
+    isbn: undefined,
+    ...props.editBook,
   },
   validationSchema: toTypedSchema(validationUtils.generics.bookSchema()),
 });
 
 const onSubmit = handleSubmit(async (values: IBook) => {
-  values.pdfFile = `https://litterarum.onrender.com/api/v1/files/${values.pdfFile}`
-  console.log(values);
-
   await $fetch<IHttpSuccessResponse<IHttpPostDataResponse>>("api/v1/books", {
     baseURL: config.public.apiUrl,
-    method: "POST",
+    method: isEditMode.value ? "PUT" : "POST",
     body: values,
     headers: {
-      Authorization: `Basic ${config.token}`,
+      Authorization: `Basic ${config.public.token}`,
     },
     onResponse: () => {
-      emit("created");
+      isEditMode.value ? emit("updated") : emit("created");
       close();
     },
     onResponseError: (r: any) => {
@@ -143,10 +150,9 @@ const onSubmit = handleSubmit(async (values: IBook) => {
               name="pdfFile"
               label="PDF Select"
               placeholder="Select PDF files"
-              :options="pdfFiles ? pdfFiles.data : undefined"
-              optionLabel="basename"
-              optionValue="basename"
+              :options="pdfFiles ? pdfFiles : undefined"
               :loading="loadingPdfFiles"
+              :virtualScrollerOptions="{ itemSize: 38 }"
             />
             <Button label="Get Metadata" />
             <div class="tw-flex tw-gap-2">

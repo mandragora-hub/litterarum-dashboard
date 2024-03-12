@@ -4,8 +4,8 @@ import type {
 } from "primevue/dynamicdialogoptions";
 
 const formsComponents = {
-  createBook: defineAsyncComponent(
-    () => import("~/components/forms/Book/Create.vue")
+  createOrEditBook: defineAsyncComponent(
+    () => import("~/components/forms/Book/CreateOrEdit.vue")
   ),
 };
 
@@ -91,7 +91,7 @@ export const useModal = () => {
   };
 
   const openForm = <T extends Record<string, any>>(
-    form: "CreateBook",
+    form: "CreateOrEditBook",
     formProps: T,
     options?: ModalOptions,
     dynamicDialogOptions?: DynamicDialogOptions
@@ -102,14 +102,13 @@ export const useModal = () => {
       ...options,
     };
     const forms = {
-      CreateBook: () =>
+      CreateOrEditBook: () =>
         genericsOpenForms(
-          formsComponents.createBook,
+          formsComponents.createOrEditBook,
           formProps,
           defaultModalOptions,
           dynamicDialogOptions
         ),
-
       default: () => {
         // this will never be executed. Unless that types check fails
         console.log(`${form} unknown modals form.`);

@@ -2,7 +2,11 @@
 import type { IHttpSuccessResponse, IBook } from "~/types";
 import { FilterMatchMode } from "primevue/api";
 
+const config = useRuntimeConfig();
 const modal = useModal();
+const confirm = useConfirm();
+const toast = useToast();
+
 const {
   data: books,
   pending,
@@ -33,7 +37,45 @@ const clearFilter = () => {
   filters.value.global.value = null;
 };
 
+const confirmDeleteBook = (bookId: string) => {
+  confirm.require({
+    header: "Confirmation",
+    message: "Do you want to delete this record?",
+    icon: "pi pi-info-circle",
+    rejectClass: "p-button-secondary p-button-outlined p-button-sm",
+    acceptClass: "p-button-danger p-button-sm",
+    rejectLabel: "Cancel",
+    acceptLabel: "Delete",
+    accept: async () => deleteBook(bookId),
+  });
+};
+
 const deleteSelect = () => {};
+
+const deleteBook = async (bookId: string) => {
+  await $fetch(`api/v1/books/${bookId}`, {
+    baseURL: config.public.apiUrl,
+    method: "DELETE",
+    headers: {
+      Authorization: `Basic ${config.public.token}`,
+    },
+    onResponse: () => {
+      toast.add({
+        severity: "info",
+        summary: "Confirmed",
+        detail: "Record deleted",
+      });
+      execute();
+    },
+    onResponseError: () => {
+      toast.add({
+        severity: "error",
+        summary: "Rejected",
+        detail: "Error on delete record",
+      });
+    },
+  });
+};
 
 const isEmpty = computed(() => {
   if (pending.value) return false;
@@ -42,23 +84,22 @@ const isEmpty = computed(() => {
 });
 
 const handleEditButton = (book: IBook) => {
-  // modal.openForm(
-  //   "EditarCuentaPresupuestaria",
-  //   {
-  //     cuentapresupuestaria: data,
-  //     onCreated: execute,
-  //   },
-  //   {
-  //     title: `Editar ${data.nivelCuentaPresupuestaria.toLowerCase()}`,
-  //     description:
-  //       "Información importante para agregar en el catalogo de cuenta presupuestaria",
-  //   }
-  // );
+  modal.openForm(
+    "CreateOrEditBook",
+    {
+      editBook: book,
+      onUpdated: execute,
+    },
+    {
+      title: "Edit book",
+      description: "Edit book",
+    }
+  );
 };
 
 const handleCreateButton = () => {
   modal.openForm(
-    "CreateBook",
+    "CreateOrEditBook",
     {
       onCreated: execute,
     },
@@ -170,9 +211,18 @@ useSeoMeta({
       <Column header="Action">
         <template #body="slotProps">
           <div class="tw-flex tw-gap-x-4">
-            <Button icon="pi pi-file-edit" outlined />
+            <Button
+              icon="pi pi-file-edit"
+              outlined
+              @click="handleEditButton(slotProps.data)"
+            />
             <Button icon="pi pi-eye" outlined />
-            <Button icon="pi pi-trash" outlined severity="danger" />
+            <Button
+              icon="pi pi-trash"
+              outlined
+              severity="danger"
+              @click="confirmDeleteBook(slotProps.data._id)"
+            />
           </div>
         </template>
       </Column>

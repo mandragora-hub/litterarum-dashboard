@@ -9,10 +9,12 @@ useHead({
 </script>
 
 <template>
-  <Toast />
   <NuxtLoadingIndicator color="lightblue" />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <!-- Prime Component Services -->
+  <Toast />
   <DynamicDialog />
+  <ConfirmDialog />
 </template>
