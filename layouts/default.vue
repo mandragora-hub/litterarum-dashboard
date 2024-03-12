@@ -4,6 +4,8 @@ import type { MenuItem } from "primevue/menuitem";
 import type { BreadcrumbPassThroughOptions } from "primevue/breadcrumb";
 import type { PassThrough } from "primevue/ts-helpers";
 
+const { signOut } = useAuth();
+
 const route = useRoute();
 const router = useRouter();
 
@@ -74,6 +76,7 @@ const sideBarItems: MenuItem[] = [
         label: "Logout",
         icon: "pi pi-sign-out",
         shortcut: "⌘+Q",
+        command: async () => await signOut(),
       },
     ],
   },

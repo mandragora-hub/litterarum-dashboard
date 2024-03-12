@@ -11,6 +11,9 @@ export default defineNuxtConfig({
       token: process.env.BACKEND_REST_API_TOKEN,
       apiUrl: process.env.BACKEND_REST_API_URL,
     },
+    githubClientId: process.env.GITHUB_ID,
+    githubClientSecret: process.env.GITHUB_SECRET,
+    authSecret: process.env.AUTH_SECRET,
   },
   modules: [
     "@nuxtjs/tailwindcss",
@@ -18,7 +21,13 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "@nuxt/image",
+    "@sidebase/nuxt-auth",
   ],
+  auth: {
+    baseURL: "http://localhost:3000/api/auth",
+    globalAppMiddleware: true,
+    provider: { type: "authjs" },
+  },
   primevue: {
     importPT: {
       as: "MyCustomPreset",
