@@ -105,7 +105,7 @@ const routeForBreadCrumb = computed(() =>
     >
       <Menu :model="sideBarItems" :pt="menuPTStyle">
         <template #start>
-          <span class="tw-flex tw-items-center tw-gap-2 tw-px-2 tw-py-2">
+          <span class="tw-flex tw-items-center tw-gap-x-2 tw-px-2 tw-py-8">
             <NuxtImg
               width="60"
               height="60"
@@ -114,7 +114,7 @@ const routeForBreadCrumb = computed(() =>
               ismap
               src="logo.svg"
             />
-            <span class="tw-font-medium tw-text-xl">Dashboard</span>
+            <span class="tw-font-medium tw-text-xl">Litterarum Dashboard</span>
           </span>
         </template>
       </Menu>
