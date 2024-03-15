@@ -36,6 +36,7 @@ const sideBarItems: MenuItem[] = [
       {
         label: "Tags",
         icon: "pi pi-wallet",
+        href: "/tags",
       },
       {
         label: "Files",
