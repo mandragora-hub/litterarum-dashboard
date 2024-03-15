@@ -7,16 +7,6 @@ import type { PassThrough } from "primevue/ts-helpers";
 const { signOut } = useAuth();
 
 const route = useRoute();
-const router = useRouter();
-
-const setRouteToItem = (r: string) => {
-  return {
-    command: () => {
-      router.push(r);
-    },
-    route: r,
-  };
-};
 
 const menuPTStyle: PassThrough<MenuPassThroughOptions> = {
   root: { class: " tw-border tw-border-0 tw-rounded-none tw-bg-white" },
@@ -43,7 +33,7 @@ const sideBarItems: MenuItem[] = [
       {
         label: "Books",
         icon: "pi pi-sitemap",
-        ...setRouteToItem("/books"),
+        href: "/books",
       },
       {
         label: "Authors",
@@ -117,6 +107,19 @@ const routeForBreadCrumb = computed(() =>
             <span class="tw-font-medium tw-text-xl">Litterarum Dashboard</span>
           </span>
         </template>
+        <template #item="{ item }">
+          <NuxtLink :href="item.href">
+            <div class="tw-flex tw-items-center tw-gap-x-2 tw-p-2">
+              <span :class="item.icon" />
+              <span class="">{{ item.label }}</span>
+              <span
+                v-if="item.shortcut"
+                class="tw-ml-auto tw-border-px tw-border-rounded tw-text-xs tw-p-1"
+                >{{ item.shortcut }}</span
+              >
+            </div>
+          </NuxtLink>
+        </template>
       </Menu>
     </div>
 
@@ -140,9 +143,3 @@ const routeForBreadCrumb = computed(() =>
     </div>
   </div>
 </template>
-
-<style>
-.my-custom-menu-label-shadow:hover {
-  text-shadow: 0.2px 0.2px 4px lightskyblue;
-}
-</style>
