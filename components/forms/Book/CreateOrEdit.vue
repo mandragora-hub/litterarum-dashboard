@@ -195,7 +195,11 @@ const onSubmit = handleSubmit(async (values: IBook) => {
       <Divider />
       <div class="tw-flex tw-justify-end tw-gap-x-2">
         <Button label="Cancel" text size="small" @click="close" />
-        <Button label="Create" size="small" type="submit" />
+        <Button
+          :label="isEditMode ? 'Edit' : 'Create'"
+          size="small"
+          type="submit"
+        />
       </div>
     </form>
   </div>

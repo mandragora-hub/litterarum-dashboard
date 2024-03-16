@@ -10,6 +10,13 @@ const generics = {
       views: number().notRequired(),
     });
   },
+  authorSchema: () => {
+    return object({
+      name: string().required(),
+      alias: string(),
+      photoUrl: string(),
+    });
+  },
 };
 
 export default {

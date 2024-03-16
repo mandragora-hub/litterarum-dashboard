@@ -38,6 +38,7 @@ const sideBarItems: MenuItem[] = [
       {
         label: "Authors",
         icon: "pi pi-chart-pie",
+        href: "/authors",
       },
       {
         label: "Tags",
@@ -114,7 +115,7 @@ const routeForBreadCrumb = computed(() =>
               <span class="">{{ item.label }}</span>
               <span
                 v-if="item.shortcut"
-                class="tw-ml-auto tw-border-px tw-border-rounded tw-text-xs tw-p-1"
+                class="tw-ml-auto tw-border tw-rounded tw-text-xs tw-p-1"
                 >{{ item.shortcut }}</span
               >
             </div>

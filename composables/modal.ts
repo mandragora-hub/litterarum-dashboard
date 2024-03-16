@@ -7,6 +7,9 @@ const formsComponents = {
   createOrEditBook: defineAsyncComponent(
     () => import("~/components/forms/Book/CreateOrEdit.vue")
   ),
+  createOrEditAuthor: defineAsyncComponent(
+    () => import("~/components/forms/Author/CreateOrEdit.vue")
+  ),
 };
 
 type ModalOptions = {
@@ -91,7 +94,7 @@ export const useModal = () => {
   };
 
   const openForm = <T extends Record<string, any>>(
-    form: "CreateOrEditBook",
+    form: "CreateOrEditBook" | "CreateOrEditAuthor",
     formProps: T,
     options?: ModalOptions,
     dynamicDialogOptions?: DynamicDialogOptions
@@ -105,6 +108,13 @@ export const useModal = () => {
       CreateOrEditBook: () =>
         genericsOpenForms(
           formsComponents.createOrEditBook,
+          formProps,
+          defaultModalOptions,
+          dynamicDialogOptions
+        ),
+      CreateOrEditAuthor: () =>
+        genericsOpenForms(
+          formsComponents.createOrEditAuthor,
           formProps,
           defaultModalOptions,
           dynamicDialogOptions
