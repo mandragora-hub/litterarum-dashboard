@@ -77,12 +77,6 @@ const deleteBook = async (bookId: string) => {
   });
 };
 
-const isEmpty = computed(() => {
-  if (pending.value) return false;
-  if (books.value) return books.value.data.length <= 0;
-  return true;
-});
-
 const handleEditButton = (book: IBook) => {
   modal.openForm(
     "CreateOrEditBook",
@@ -132,19 +126,7 @@ useSeoMeta({
         <Button outlined icon="pi pi-print" size="small" />
       </div>
     </div>
-
-    <div style="height: 2px" class="tw-bg-gray-300 tw-my-6"></div>
-    <EmptyMessage
-      v-if="isEmpty"
-      message=" Aun no tienes un clasificador registrados"
-    >
-      <Button
-        label="Crear Clasificador"
-        icon="pi pi-plus"
-        size="small"
-        @click="handleCreateButton"
-      />
-    </EmptyMessage>
+    <Divider />
     <DataTable
       v-model:filters="filters"
       v-model:selection="selectedBooks"
@@ -157,9 +139,10 @@ useSeoMeta({
       paginator
       :rows="30"
       :rowsPerPageOptions="[5, 10, 20, 50]"
+      :pt="{ header: 'tw-px-0' }"
     >
       <template #header>
-        <div class="tw-flex tw-justify-between">
+        <div class="tw-flex tw-justify-between tw-py-2">
           <div class="tw-flex tw-gap-x-2">
             <Button
               type="button"

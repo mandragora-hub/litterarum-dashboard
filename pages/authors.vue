@@ -65,12 +65,6 @@ const deleteAuthor = async (authorId: string) => {
   });
 };
 
-const isEmpty = computed(() => {
-  if (pending.value) return false;
-  if (authors.value) return authors.value.data.length <= 0;
-  return true;
-});
-
 const handleEditButton = (author: IAuthor) => {
   modal.openForm(
     "CreateOrEditAuthor",
@@ -120,16 +114,7 @@ useSeoMeta({
         <Button outlined icon="pi pi-print" size="small" />
       </div>
     </div>
-
     <Divider />
-    <EmptyMessage v-if="isEmpty" message="Empty list">
-      <Button
-        label="Create a new author"
-        icon="pi pi-plus"
-        size="small"
-        @click="handleCreateButton"
-      />
-    </EmptyMessage>
     <DataTable
       v-model:filters="filters"
       v-model:selection="selectedAuthors"
