@@ -18,6 +18,20 @@ const props = defineProps<{
 const emit = defineEmits(["close", "created", "updated"]);
 const close = () => emit("close");
 
+const modal = useModal();
+const createAuthor = () => {
+  modal.openForm(
+    "CreateOrEditAuthor",
+    {
+      onCreated: executeAuthors,
+    },
+    {
+      title: `Create a new Author`,
+      description: "Create a new Author for the virtual library",
+    }
+  );
+};
+
 const isEditMode = computed(() => (props.editBook ? true : false));
 
 const config = useRuntimeConfig();
@@ -32,8 +46,11 @@ const { pending: loadingPdfFiles } = useApiFetch<[string]>("api/v1/files", {
   },
 });
 
-const { data: authors, pending: loadingAuthors } =
-  useApiFetch<IHttpSuccessResponse<[IAuthor]>>("api/v1/authors");
+const {
+  data: authors,
+  pending: loadingAuthors,
+  execute: executeAuthors,
+} = useApiFetch<IHttpSuccessResponse<[IAuthor]>>("api/v1/authors");
 
 const { data: tags, pending: loadingTags } =
   useApiFetch<IHttpSuccessResponse<[ITag]>>("api/v1/tags");
@@ -115,7 +132,12 @@ const onSubmit = handleSubmit(async (values: IBook) => {
                 optionValue="_id"
                 :loading="loadingAuthors"
               />
-              <Button class="tw-h-10" icon="pi pi-plus" outlined />
+              <Button
+                class="tw-h-10"
+                icon="pi pi-plus"
+                outlined
+                @click="createAuthor"
+              />
             </div>
             <CustomInputTextField
               name="publicationDate"
