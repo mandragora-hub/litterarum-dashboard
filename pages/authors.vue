@@ -99,108 +99,103 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="tw-p-8">
-    <div class="tw-flex tw-items-center">
-      <h1 class="tw-text-primary-100 tw-font-bold tw-text-2xl tw-grow">
-        Authors
-      </h1>
-      <div class="tw-flex tw-gap-x-4">
-        <Button
-          label="Create a new author"
-          icon="pi pi-plus"
-          size="small"
-          @click="handleCreateButton"
-        />
-        <Button outlined icon="pi pi-print" size="small" />
-      </div>
-    </div>
-    <Divider />
-    <DataTable
-      v-model:filters="filters"
-      v-model:selection="selectedAuthors"
-      :globalFilterFields="['name']"
-      dataKey="_id"
-      filterDisplay="row"
-      :value="authors?.data"
-      :loading="pending"
-      stripedRows
-      paginator
-      :rows="10"
-      :rowsPerPageOptions="[5, 10, 20, 50]"
-      :pt="{ header: 'tw-px-0' }"
-    >
-      <template #header>
-        <div class="tw-flex tw-justify-between tw-py-2">
-          <div class="tw-flex tw-gap-x-2">
-            <Button
-              type="button"
-              icon="pi pi-filter-slash"
-              label="Clear"
-              outlined
-              @click="clearFilter"
-            />
-            <Button
-              v-if="selectedAuthors && selectedAuthors.length > 0"
-              type="button"
-              icon="pi pi-trash"
-              severity="danger"
-              :label="`Delete (${selectedAuthors.length})`"
-              outlined
-              @click="deleteSelect"
-            />
-          </div>
-          <IconField iconPosition="left">
-            <InputIcon>
-              <i class="pi pi-search" />
-            </InputIcon>
-            <InputText
-              v-model="filters['global'].value"
-              placeholder="Keyword Search"
-            />
-          </IconField>
-        </div>
-      </template>
-      <template #empty> No author found.</template>
-      <Column selectionMode="multiple"></Column>
-      <Column header="Photo">
-        <template #body="slotProps">
-          <NuxtImg
-            :src="slotProps.data.photoUrl || 'image-break.png'"
-            class="tw-w-10 tw-rounded"
-            width="1em"
-            height="1em"
-          />
-        </template>
-      </Column>
-      <Column
-        v-for="col of columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-        :sortable="col.sortable"
-      ></Column>
-      <Column header="Action">
-        <template #body="slotProps">
-          <div class="tw-flex tw-gap-x-4">
-            <Button
-              icon="pi pi-file-edit"
-              outlined
-              @click="handleEditButton(slotProps.data)"
-            />
-            <Button icon="pi pi-eye" outlined />
-            <Button
-              icon="pi pi-trash"
-              outlined
-              severity="danger"
-              @click="confirmDeleteAuthor(slotProps.data._id)"
-            />
+  <Page name="Authors">
+    <template #buttons>
+      <Button
+        label="Create a new author"
+        icon="pi pi-plus"
+        size="small"
+        @click="handleCreateButton"
+      />
+    </template>
+    <template #body>
+      <DataTable
+        v-model:filters="filters"
+        v-model:selection="selectedAuthors"
+        :globalFilterFields="['name']"
+        dataKey="_id"
+        filterDisplay="row"
+        :value="authors?.data"
+        :loading="pending"
+        stripedRows
+        paginator
+        :rows="10"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        :pt="{ header: 'tw-px-0' }"
+      >
+        <template #header>
+          <div class="tw-flex tw-justify-between tw-py-2">
+            <div class="tw-flex tw-gap-x-2">
+              <Button
+                type="button"
+                icon="pi pi-filter-slash"
+                label="Clear"
+                outlined
+                @click="clearFilter"
+              />
+              <Button
+                v-if="selectedAuthors && selectedAuthors.length > 0"
+                type="button"
+                icon="pi pi-trash"
+                severity="danger"
+                :label="`Delete (${selectedAuthors.length})`"
+                outlined
+                @click="deleteSelect"
+              />
+            </div>
+            <IconField iconPosition="left">
+              <InputIcon>
+                <i class="pi pi-search" />
+              </InputIcon>
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Keyword Search"
+              />
+            </IconField>
           </div>
         </template>
-      </Column>
-      <template #loading> Loading author data. Please wait. </template>
-      <template #footer>
-        In total there are {{ authors ? authors.data.length : 0 }} authors.
-      </template>
-    </DataTable>
-  </div>
+        <template #empty> No author found.</template>
+        <Column selectionMode="multiple"></Column>
+        <Column header="Photo">
+          <template #body="slotProps">
+            <NuxtImg
+              :src="slotProps.data.photoUrl || 'image-break.png'"
+              class="tw-w-10 tw-rounded"
+              width="1em"
+              height="1em"
+            />
+          </template>
+        </Column>
+        <Column
+          v-for="col of columns"
+          :key="col.field"
+          :field="col.field"
+          :header="col.header"
+          :sortable="col.sortable"
+        ></Column>
+        <Column header="Action">
+          <template #body="slotProps">
+            <div class="tw-flex tw-gap-x-4">
+              <Button
+                icon="pi pi-file-edit"
+                outlined
+                @click="handleEditButton(slotProps.data)"
+              />
+              <Button icon="pi pi-eye" outlined />
+              <Button
+                icon="pi pi-trash"
+                outlined
+                severity="danger"
+                @click="confirmDeleteAuthor(slotProps.data._id)"
+              />
+            </div>
+          </template>
+        </Column>
+        <template #loading> Loading author data. Please wait. </template>
+        <template #footer>
+          In total there are {{ authors ? authors.data.length : 0 }} authors.
+        </template>
+      </DataTable>
+    </template>
+  </Page>
 </template>

@@ -79,7 +79,7 @@ const routeForBreadCrumb = computed(() =>
 
 const home = ref({
   icon: "pi pi-home",
-  route: "/",
+  url: "/",
 });
 </script>
 
