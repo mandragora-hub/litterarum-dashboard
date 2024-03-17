@@ -4,7 +4,7 @@ import type { MenuItem } from "primevue/menuitem";
 import type { BreadcrumbPassThroughOptions } from "primevue/breadcrumb";
 import type { PassThrough } from "primevue/ts-helpers";
 
-const { signOut } = useAuth();
+const { signOut, data } = useAuth();
 
 const route = useRoute();
 
@@ -13,14 +13,7 @@ const menuPTStyle: PassThrough<MenuPassThroughOptions> = {
 };
 
 const breadcrumbPTStyle: PassThrough<BreadcrumbPassThroughOptions> = {
-  root: { class: "tw-bg-transparent tw-border-0" },
-  label: ({ context }) => ({
-    class:
-      context.index == 0
-        ? "tw-ml-2 tw-text-neutral-600 hover:tw-text-opacity-80 tw-transition-all tw-duration-150"
-        : "tw-text-blue-900 tw-font-medium",
-  }),
-  separatorIcon: { class: "tw-w-2 tw-h-2 tw-mt-px" },
+  root: { class: "tw-bg-transparent" },
 };
 
 const sideBarItems: MenuItem[] = [
@@ -77,14 +70,17 @@ const routeForBreadCrumb = computed(() =>
   route.path
     .split("/")
     .filter((val) => val != "")
-    .map((val, index) => {
+    .map((val) => {
       const url = route.path.slice(0, route.path.lastIndexOf(val) + val.length);
-      const label = val;
-      return index == 0
-        ? { label, icon: "pi pi-home", url: url }
-        : { label, url: url };
+      const label = val.charAt(0).toUpperCase() + val.slice(1);
+      return { label, route: url };
     })
 );
+
+const home = ref({
+  icon: "pi pi-home",
+  route: "/",
+});
 </script>
 
 <template>
@@ -96,17 +92,21 @@ const routeForBreadCrumb = computed(() =>
     >
       <Menu :model="sideBarItems" :pt="menuPTStyle">
         <template #start>
-          <span class="tw-flex tw-items-center tw-gap-x-2 tw-px-2 tw-py-8">
-            <NuxtImg
-              width="60"
-              height="60"
-              loading="eager"
-              decoding="auto"
-              ismap
-              src="logo.svg"
-            />
-            <span class="tw-font-medium tw-text-xl">Litterarum Dashboard</span>
-          </span>
+          <NuxtLink href="/">
+            <span class="tw-flex tw-items-center tw-gap-x-2 tw-px-2 tw-py-8">
+              <NuxtImg
+                width="60"
+                height="60"
+                loading="eager"
+                decoding="auto"
+                ismap
+                src="logo.svg"
+              />
+              <span class="tw-font-medium tw-text-xl"
+                >Litterarum Dashboard</span
+              >
+            </span>
+          </NuxtLink>
         </template>
         <template #item="{ item }">
           <NuxtLink :href="item.href">
@@ -126,9 +126,13 @@ const routeForBreadCrumb = computed(() =>
 
     <div class="tw-ml-72">
       <div class="tw-flex tw-justify-between tw-items-center tw-mx-12 tw-my-6">
-        <Breadcrumb :model="routeForBreadCrumb" :pt="breadcrumbPTStyle" />
+        <Breadcrumb
+          :home="home"
+          :model="routeForBreadCrumb"
+          :pt="breadcrumbPTStyle"
+        />
         <Avatar
-          label="P"
+          :image="data?.user?.image ? data.user.image : undefined"
           class="tw-text-white tw-bg-blue-900"
           size="large"
           shape="circle"

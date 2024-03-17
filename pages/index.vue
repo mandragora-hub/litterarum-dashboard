@@ -1,19 +1,15 @@
-<script setup lang="ts">
-const counter = useState("counter", () => 0);
-</script>
+<script setup lang="ts"></script>
 <template>
-  <div class="text-center mt-4">
-    <h1>{{ counter }}</h1>
-    <Button label="Submit" />
-    <Button
-      label="Button"
-      :disabled="true"
-      @click="counter++"
-      size="small"
-      severity="primary"
-      text
-    />
-    <Button label="Submit" />
+  <div class="tw-p-8">
+    <div class="tw-flex tw-items-center">
+      <h1 class="tw-text-primary-100 tw-font-bold tw-text-2xl tw-grow">
+        Litterarum Dashboard
+      </h1>
+      <div class="tw-flex tw-gap-x-4">
+        <Button outlined icon="pi pi-print" size="small" />
+      </div>
+    </div>
+    <Divider />
+    <Healthcheck />
   </div>
 </template>
-<style></style>

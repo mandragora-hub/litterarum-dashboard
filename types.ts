@@ -66,3 +66,9 @@ export interface IFile {
   etag: string;
   mime: string;
 }
+
+export interface IHealthcheck {
+  uptime: number;
+  message: string;
+  timestamp: number;
+}
