@@ -10,6 +10,9 @@ const formsComponents = {
   createOrEditAuthor: defineAsyncComponent(
     () => import("~/components/forms/Author/CreateOrEdit.vue")
   ),
+  uploadFile: defineAsyncComponent(
+    () => import("~/components/forms/Files/Upload.vue")
+  ),
 };
 
 type ModalOptions = {
@@ -94,7 +97,7 @@ export const useModal = () => {
   };
 
   const openForm = <T extends Record<string, any>>(
-    form: "CreateOrEditBook" | "CreateOrEditAuthor",
+    form: "CreateOrEditBook" | "CreateOrEditAuthor" | "UploadFile",
     formProps: T,
     options?: ModalOptions,
     dynamicDialogOptions?: DynamicDialogOptions
@@ -115,6 +118,13 @@ export const useModal = () => {
       CreateOrEditAuthor: () =>
         genericsOpenForms(
           formsComponents.createOrEditAuthor,
+          formProps,
+          defaultModalOptions,
+          dynamicDialogOptions
+        ),
+      UploadFile: () =>
+        genericsOpenForms(
+          formsComponents.uploadFile,
           formProps,
           defaultModalOptions,
           dynamicDialogOptions
