@@ -17,6 +17,11 @@ const generics = {
       photoUrl: string(),
     });
   },
+  tagSchema: () => {
+    return object({
+      tag: string().required(),
+    });
+  },
 };
 
 export default {
