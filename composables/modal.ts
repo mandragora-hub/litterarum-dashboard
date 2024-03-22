@@ -131,7 +131,7 @@ export const useModal = () => {
         ),
       UploadFile: () =>
         genericsOpenForms(
-          formsComponents.createOrEditAuthor,
+          formsComponents.uploadFile,
           formProps,
           defaultModalOptions,
           dynamicDialogOptions
