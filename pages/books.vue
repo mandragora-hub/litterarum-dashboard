@@ -191,12 +191,14 @@ useSeoMeta({
               <Button
                 icon="pi pi-file-edit"
                 outlined
+                size="small"
                 @click="handleEditButton(slotProps.data)"
               />
               <Button icon="pi pi-eye" outlined />
               <Button
                 icon="pi pi-trash"
                 outlined
+                size="small"
                 severity="danger"
                 @click="confirmDeleteBook(slotProps.data._id)"
               />
