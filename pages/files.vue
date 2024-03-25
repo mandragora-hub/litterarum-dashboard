@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IHttpSuccessResponse, IBook } from "~/types";
+import type { IHttpSuccessResponse, IFile } from "~/types";
 import { FilterMatchMode } from "primevue/api";
 
 const config = useRuntimeConfig();
@@ -8,25 +8,19 @@ const confirm = useConfirm();
 const toast = useToast();
 
 const {
-  data: books,
+  data: files,
   pending,
   execute,
-} = useApiFetch<IHttpSuccessResponse<[IBook]>>("api/v1/books");
+} = useApiFetch<IHttpSuccessResponse<[IFile]>>("api/v1/files");
 
-const selectedBooks = ref<[IBook]>();
+const selectedBooks = ref<[IFile]>();
 
 const columns = [
-  { field: "title", sortable: true, header: "Title" },
-  { field: "slug", header: "Slug" },
-  // { field: "subtitle", header: "Subtitle" },
-  // { field: "description", header: "Description" },
-  // { field: "readTime", header: "ReadTime" },
-  // { field: "wordCount", header: "WordCount" },
-  { field: "pages", header: "Pages" },
-  { field: "downloaded", header: "Downloaded" },
-  { field: "views", header: "Views" },
-  { field: "createdAt", header: "Created at" },
-  { field: "updatedAt", header: "Updated at" },
+  { field: "basename", sortable: true, header: "Basename" },
+  { field: "lastmod", sortable: true, header: "Lastmod" },
+  { field: "size", sortable: true, header: "Size" },
+  { field: "type", sortable: true, header: "Type" },
+  { field: "mime", sortable: true, header: "Mime" },
 ];
 
 const filters = ref({
@@ -53,81 +47,70 @@ const confirmDeleteBook = (bookId: string) => {
 const deleteSelect = () => {};
 
 const deleteBook = async (bookId: string) => {
-  await $fetch(`api/v1/books/${bookId}`, {
-    baseURL: config.public.apiUrl,
-    method: "DELETE",
-    headers: {
-      Authorization: `Basic ${config.public.token}`,
-    },
-    onResponse: () => {
-      toast.add({
-        severity: "info",
-        summary: "Confirmed",
-        detail: "Record deleted",
-      });
-      execute();
-    },
-    onResponseError: () => {
-      toast.add({
-        severity: "error",
-        summary: "Rejected",
-        detail: "Error on delete record",
-      });
-    },
-  });
+  // await $fetch(`api/v1/books/${bookId}`, {
+  //   baseURL: config.public.apiUrl,
+  //   method: "DELETE",
+  //   headers: {
+  //     Authorization: `Basic ${config.public.token}`,
+  //   },
+  //   onResponse: () => {
+  //     toast.add({
+  //       severity: "info",
+  //       summary: "Confirmed",
+  //       detail: "Record deleted",
+  //     });
+  //     execute();
+  //   },
+  //   onResponseError: () => {
+  //     toast.add({
+  //       severity: "error",
+  //       summary: "Rejected",
+  //       detail: "Error on delete record",
+  //     });
+  //   },
+  // });
 };
 
-const handleEditButton = (book: IBook) => {
+const handleUploadButton = () => {
   modal.openForm(
-    "CreateOrEditBook",
+    "UploadFile",
     {
-      editBook: book,
-      onUpdated: execute,
+      onUploaded: execute,
     },
     {
-      title: "Edit book",
-      description: "Edit book",
-    }
-  );
-};
-
-const handleCreateButton = () => {
-  modal.openForm(
-    "CreateOrEditBook",
-    {
-      onCreated: execute,
-    },
-    {
-      title: `Create a new book`,
-      description: "Create a new book for the virtual library",
+      title: `Upload files`,
+      description: "Upload PDF file to our cloud server",
     }
   );
 };
 
 useSeoMeta({
-  title: "Books",
-  description: "Descripción de la pagina.",
+  title: "Files",
+  description: "List of all pdf files that are available in our cloud storage.",
 });
 </script>
 
 <template>
-  <Page name="Books">
+  <Page
+    name="Files"
+    description="List of all pdf files that are available in our cloud storage"
+  >
     <template #buttons>
       <Button
-        label="Create new book"
+        label="Add new file"
         icon="pi pi-plus"
         size="small"
-        @click="handleCreateButton"
+        @click="handleUploadButton"
       />
     </template>
     <template #body>
       <DataTable
         v-model:filters="filters"
         v-model:selection="selectedBooks"
-        :globalFilterFields="['title']"
+        :globalFilterFields="['basename']"
         dataKey="_id"
         filterDisplay="row"
-        :value="books?.data"
+        :value="files?.data"
         :loading="pending"
         stripedRows
         paginator
@@ -166,18 +149,8 @@ useSeoMeta({
             </IconField>
           </div>
         </template>
-        <template #empty> No customers found. </template>
+        <template #empty>No files found.</template>
         <Column selectionMode="multiple"></Column>
-        <Column header="Cover">
-          <template #body="slotProps">
-            <NuxtImg
-              :src="slotProps.data.coverUrl || 'image-break.png'"
-              class="tw-w-10 tw-rounded"
-              width="1em"
-              height="1em"
-            />
-          </template>
-        </Column>
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -188,26 +161,25 @@ useSeoMeta({
         <Column header="Action">
           <template #body="slotProps">
             <div class="tw-flex tw-gap-x-4">
-              <Button
-                icon="pi pi-file-edit"
-                outlined
-                size="small"
-                @click="handleEditButton(slotProps.data)"
-              />
-              <Button icon="pi pi-eye" outlined />
+              <NuxtLink
+                :to="`https://litterarum.onrender.com/api/v1/files/${slotProps.data.basename}`"
+                target="_blank"
+                rel="noopener"
+              >
+                <Button icon="pi pi-external-link" size="small" outlined />
+              </NuxtLink>
               <Button
                 icon="pi pi-trash"
                 outlined
-                size="small"
                 severity="danger"
+                size="small"
                 @click="confirmDeleteBook(slotProps.data._id)"
               />
             </div>
           </template>
         </Column>
-        <template #loading> Loading customers data. Please wait. </template>
         <template #footer>
-          In total there are {{ books ? books.data.length : 0 }} books.
+          In total there are {{ files ? files.data.length : 0 }} files.
         </template>
       </DataTable>
     </template>

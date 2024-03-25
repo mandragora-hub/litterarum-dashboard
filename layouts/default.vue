@@ -41,6 +41,7 @@ const sideBarItems: MenuItem[] = [
       {
         label: "Files",
         icon: "pi pi-clone",
+        href: "/files",
       },
     ],
   },
