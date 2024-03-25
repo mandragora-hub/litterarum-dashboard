@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/yup";
-import validationUtils from "@/utils/validationUtils";
-import type {
-  IHttpSuccessResponse,
-  IHttpPostDataResponse,
-  IAuthor,
-} from "~/types";
+import type { FileUploadErrorEvent } from "primevue/fileupload";
 
 const emit = defineEmits(["close", "uploaded"]);
 const close = () => emit("close");
@@ -24,18 +17,30 @@ const onAdvancedUpload = () => {
     life: 3000,
   });
 };
+
+const onErrorEvent = (err: FileUploadErrorEvent) => {
+  console.error("Error has ocurred on file upload: ", err.xhr.response);
+  const data = JSON.parse(err.xhr.response);
+  toast.add({
+    severity: "error",
+    summary: "Error on file upload",
+    detail: data.message ? data.message : "Error has ocurred",
+    life: 3000,
+  });
+};
 </script>
 
 <template>
   <div class="tw-py-2">
     <div class="tw-flex tw-flex-col tw-gap-y-6 tw-my-2">
       <FileUpload
-        name="files[]"
+        name="files"
         :url="uploadUrl"
         @upload="onAdvancedUpload()"
         :multiple="true"
         accept="image/*"
         :maxFileSize="1000000"
+        @error="onErrorEvent"
       >
         <template #empty>
           <p>Drag and drop files to here to upload.</p>
