@@ -14,6 +14,12 @@ const menuPTStyle: PassThrough<MenuPassThroughOptions> = {
 
 const breadcrumbPTStyle: PassThrough<BreadcrumbPassThroughOptions> = {
   root: { class: "tw-bg-transparent" },
+  icon: {
+    class: "tw-mr-2",
+  },
+  label: {
+    class: "tw-transition-all hover:tw-text-gray-800  hover:tw-opacity-70",
+  },
 };
 
 const sideBarItems: MenuItem[] = [
@@ -80,6 +86,7 @@ const routeForBreadCrumb = computed(() =>
 );
 
 const home = ref({
+  label: "Litterarum",
   icon: "pi pi-home",
   url: "/",
 });
