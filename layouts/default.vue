@@ -97,14 +97,14 @@ const home = ref({
           <NuxtLink href="/">
             <span class="tw-flex tw-items-center tw-gap-x-2 tw-px-2 tw-py-8">
               <NuxtImg
-                width="60"
-                height="60"
+                width="50"
+                height="50"
                 loading="eager"
                 decoding="auto"
                 ismap
                 src="logo.svg"
               />
-              <span class="tw-font-medium tw-text-xl"
+              <span class="tw-font-medium tw-text-xl tw-text-gray-700"
                 >Litterarum Dashboard</span
               >
             </span>
