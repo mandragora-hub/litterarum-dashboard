@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IHttpSuccessResponse, IBook } from "~/types";
+import type { IHttpSuccessResponse, ITag } from "~/types";
 import { FilterMatchMode } from "primevue/api";
 
 const config = useRuntimeConfig();
@@ -8,25 +8,16 @@ const confirm = useConfirm();
 const toast = useToast();
 
 const {
-  data: books,
+  data: tags,
   pending,
   execute,
-} = useApiFetch<IHttpSuccessResponse<[IBook]>>("api/v1/books");
+} = useApiFetch<IHttpSuccessResponse<[ITag]>>("api/v1/tags");
 
-const selectedBooks = ref<[IBook]>();
+const selectedTags = ref<[ITag]>();
 
 const columns = [
-  { field: "title", sortable: true, header: "Title" },
-  { field: "slug", header: "Slug" },
-  // { field: "subtitle", header: "Subtitle" },
-  // { field: "description", header: "Description" },
-  // { field: "readTime", header: "ReadTime" },
-  // { field: "wordCount", header: "WordCount" },
-  { field: "pages", header: "Pages" },
-  { field: "downloaded", header: "Downloaded" },
-  { field: "views", header: "Views" },
-  { field: "createdAt", header: "Created at" },
-  { field: "updatedAt", header: "Updated at" },
+  { field: "_id", header: "ID" },
+  { field: "tag", sortable: true, header: "Tags" },
 ];
 
 const filters = ref({
@@ -37,7 +28,7 @@ const clearFilter = () => {
   filters.value.global.value = null;
 };
 
-const confirmDeleteBook = (bookId: string) => {
+const confirmDeleteTags = (tagsId: string) => {
   confirm.require({
     header: "Confirmation",
     message: "Do you want to delete this record?",
@@ -46,14 +37,14 @@ const confirmDeleteBook = (bookId: string) => {
     acceptClass: "p-button-danger p-button-sm",
     rejectLabel: "Cancel",
     acceptLabel: "Delete",
-    accept: async () => deleteBook(bookId),
+    accept: async () => deleteTag(tagsId),
   });
 };
 
 const deleteSelect = () => {};
 
-const deleteBook = async (bookId: string) => {
-  await $fetch(`api/v1/books/${bookId}`, {
+const deleteTag = async (tagsId: string) => {
+  await $fetch(`api/v1/tags/${tagsId}`, {
     baseURL: config.public.apiUrl,
     method: "DELETE",
     headers: {
@@ -77,44 +68,44 @@ const deleteBook = async (bookId: string) => {
   });
 };
 
-const handleEditButton = (book: IBook) => {
+const handleEditButton = (tag: ITag) => {
   modal.openForm(
-    "CreateOrEditBook",
+    "CreateOrEditTag",
     {
-      editBook: book,
+      editTag: tag,
       onUpdated: execute,
     },
     {
-      title: "Edit book",
-      description: "Edit book",
+      title: "Edit Tag",
+      description: "Edit tag",
     }
   );
 };
 
 const handleCreateButton = () => {
   modal.openForm(
-    "CreateOrEditBook",
+    "CreateOrEditTag",
     {
       onCreated: execute,
     },
     {
-      title: `Create a new book`,
-      description: "Create a new book for the virtual library",
+      title: `Create a new Tag`,
+      description: "Create a new tag for the virtual library",
     }
   );
 };
 
 useSeoMeta({
-  title: "Books",
-  description: "Descripción de la pagina.",
+  title: "Tags",
+  description: "Management tags for Litterarum.",
 });
 </script>
 
 <template>
-  <Page name="Books">
+  <Page name="Tags">
     <template #buttons>
       <Button
-        label="Create new book"
+        label="Create new tag"
         icon="pi pi-plus"
         size="small"
         @click="handleCreateButton"
@@ -123,20 +114,19 @@ useSeoMeta({
     <template #body>
       <DataTable
         v-model:filters="filters"
-        v-model:selection="selectedBooks"
-        :globalFilterFields="['title']"
+        v-model:selection="selectedTags"
+        :globalFilterFields="['tag']"
         dataKey="_id"
         filterDisplay="row"
-        :value="books?.data"
+        :value="tags?.data"
         :loading="pending"
         stripedRows
         paginator
-        :rows="10"
+        :rows="30"
         :rowsPerPageOptions="[5, 10, 20, 50]"
-        :pt="{ header: 'tw-px-0' }"
       >
         <template #header>
-          <div class="tw-flex tw-justify-between tw-py-2">
+          <div class="tw-flex tw-justify-between">
             <div class="tw-flex tw-gap-x-2">
               <Button
                 type="button"
@@ -146,11 +136,11 @@ useSeoMeta({
                 @click="clearFilter"
               />
               <Button
-                v-if="selectedBooks && selectedBooks.length > 0"
+                v-if="selectedTags && selectedTags.length > 0"
                 type="button"
                 icon="pi pi-trash"
                 severity="danger"
-                :label="`Delete (${selectedBooks.length})`"
+                :label="`Delete (${selectedTags.length})`"
                 outlined
                 @click="deleteSelect"
               />
@@ -166,18 +156,8 @@ useSeoMeta({
             </IconField>
           </div>
         </template>
-        <template #empty> No customers found. </template>
+        <template #empty>No tags found.</template>
         <Column selectionMode="multiple"></Column>
-        <Column header="Cover">
-          <template #body="slotProps">
-            <NuxtImg
-              :src="slotProps.data.coverUrl || 'image-break.png'"
-              class="tw-w-10 tw-rounded"
-              width="1em"
-              height="1em"
-            />
-          </template>
-        </Column>
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -194,20 +174,20 @@ useSeoMeta({
                 size="small"
                 @click="handleEditButton(slotProps.data)"
               />
-              <Button icon="pi pi-eye" outlined />
+              <!-- <Button icon="pi pi-eye" outlined /> -->
               <Button
                 icon="pi pi-trash"
                 outlined
-                size="small"
                 severity="danger"
-                @click="confirmDeleteBook(slotProps.data._id)"
+                size="small"
+                @click="confirmDeleteTags(slotProps.data._id)"
               />
             </div>
           </template>
         </Column>
         <template #loading> Loading customers data. Please wait. </template>
         <template #footer>
-          In total there are {{ books ? books.data.length : 0 }} books.
+          In total there are {{ tags ? tags.data.length : 0 }} tags.
         </template>
       </DataTable>
     </template>

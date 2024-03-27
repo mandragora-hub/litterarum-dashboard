@@ -166,12 +166,13 @@ useSeoMeta({
                 target="_blank"
                 rel="noopener"
               >
-                <Button icon="pi pi-external-link" outlined />
+                <Button icon="pi pi-external-link" size="small" outlined />
               </NuxtLink>
               <Button
                 icon="pi pi-trash"
                 outlined
                 severity="danger"
+                size="small"
                 @click="confirmDeleteBook(slotProps.data._id)"
               />
             </div>

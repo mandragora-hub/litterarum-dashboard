@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IHealthcheck, IHttpSuccessResponse } from "~/types";
+import ContextMenu from "primevue/contextmenu";
 import { formatDistanceToNow } from "date-fns";
 
 const {
@@ -41,6 +42,13 @@ const data = computed(() => {
     },
   ];
 });
+
+const menu = ref<ContextMenu>();
+const items = ref([{ label: "Restart", icon: "pi pi-sync" }]);
+
+const onButtonClick = (event: Event) => {
+  menu.value?.show(event);
+};
 </script>
 
 <template>
@@ -53,6 +61,7 @@ const data = computed(() => {
           text
           severity="secondary"
           :loading="pending"
+          @click="onButtonClick"
         />
       </div>
     </template>
@@ -63,6 +72,7 @@ const data = computed(() => {
           >: {{ item.value }}
         </li>
       </ul>
+      <ContextMenu ref="menu" :model="items" />
     </template>
   </Card>
 </template>

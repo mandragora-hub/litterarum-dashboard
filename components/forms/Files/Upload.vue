@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FileUploadErrorEvent } from "primevue/fileupload";
+
 const emit = defineEmits(["close", "uploaded"]);
 const close = () => emit("close");
 
@@ -15,6 +17,17 @@ const onAdvancedUpload = () => {
     life: 3000,
   });
 };
+
+const onErrorEvent = (err: FileUploadErrorEvent) => {
+  console.error("Error has ocurred on file upload: ", err.xhr.response);
+  const data = JSON.parse(err.xhr.response);
+  toast.add({
+    severity: "error",
+    summary: "Error on file upload",
+    detail: data.message ? data.message : "Error has ocurred",
+    life: 3000,
+  });
+};
 </script>
 
 <template>
@@ -27,6 +40,7 @@ const onAdvancedUpload = () => {
         :multiple="true"
         accept="application/pdf"
         :maxFileSize="1000000"
+        @error="onErrorEvent"
       >
         <template #empty>
           <p>Drag and drop files to here to upload.</p>
