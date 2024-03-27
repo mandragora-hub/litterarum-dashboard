@@ -1,13 +1,4 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/yup";
-import validationUtils from "@/utils/validationUtils";
-import type {
-  IHttpSuccessResponse,
-  IHttpPostDataResponse,
-  IAuthor,
-} from "~/types";
-
 const emit = defineEmits(["close", "uploaded"]);
 const close = () => emit("close");
 
@@ -30,11 +21,11 @@ const onAdvancedUpload = () => {
   <div class="tw-py-2">
     <div class="tw-flex tw-flex-col tw-gap-y-6 tw-my-2">
       <FileUpload
-        name="files[]"
+        name="files"
         :url="uploadUrl"
         @upload="onAdvancedUpload()"
         :multiple="true"
-        accept="image/*"
+        accept="application/pdf"
         :maxFileSize="1000000"
       >
         <template #empty>
