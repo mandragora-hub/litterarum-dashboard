@@ -38,7 +38,7 @@ const onErrorEvent = (err: FileUploadErrorEvent) => {
         :url="uploadUrl"
         @upload="onAdvancedUpload()"
         :multiple="true"
-        accept="image/*"
+        accept="application/pdf"
         :maxFileSize="1000000"
         @error="onErrorEvent"
       >
