@@ -55,7 +55,12 @@ const {
 const { data: tags, pending: loadingTags } =
   useApiFetch<IHttpSuccessResponse<[ITag]>>("api/v1/tags");
 
-const { handleSubmit, setValues } = useForm<IBook>({
+const editBookAuthor = computed(() => ({
+  // @ts-expect-error
+  author: props.editBook ? props.editBook.author._id : "",
+}));
+
+const { handleSubmit, setValues, values } = useForm<IBook>({
   initialValues: {
     title: "",
     // subtitle: "",
@@ -66,20 +71,22 @@ const { handleSubmit, setValues } = useForm<IBook>({
     wordCount: 0,
     pages: 0,
     downloaded: 0,
-    views: 0,
-    author: "",
     tags: [],
+    views: 0,
     pdfFile: "",
     // ePubFile?: string;
     publicationDate: "", // 431-213 BC, 1982
     isbn: undefined,
     ...props.editBook,
+    ...editBookAuthor.value
   },
   validationSchema: toTypedSchema(validationUtils.generics.bookSchema()),
 });
-
 const onSubmit = handleSubmit(async (values: IBook) => {
-  await $fetch<IHttpSuccessResponse<IHttpPostDataResponse>>("api/v1/books", {
+  const urlFixed = isEditMode.value
+    ? `api/v1/books/${values._id}`
+    : "api/v1/books";
+  await $fetch<IHttpSuccessResponse<IHttpPostDataResponse>>(urlFixed, {
     baseURL: config.public.apiUrl,
     method: isEditMode.value ? "PUT" : "POST",
     body: values,
@@ -96,6 +103,27 @@ const onSubmit = handleSubmit(async (values: IBook) => {
     },
   });
 });
+
+const { pending: loadingMetadata, execute: getMetadata } =
+  await useLazyAsyncData(() => {
+    if (!values.pdfFile) return Promise.resolve();
+    return $fetch("api/v1/files/pdf", {
+      baseURL: config.public.metadataExtractorUrl,
+      method: "POST",
+      immediate: false,
+      server: false,
+      body: { fileUrl: values.pdfFile },
+      timeout: 60 * 60 * 1000,
+      onResponse: (r) => {
+        const { pages, wordCount, readTime, metadata } = r.response._data;
+        setValues({
+          pages,
+          wordCount,
+          readTime,
+        });
+      },
+    });
+  });
 </script>
 
 <template>
@@ -131,6 +159,7 @@ const onSubmit = handleSubmit(async (values: IBook) => {
                 optionLabel="name"
                 optionValue="_id"
                 :loading="loadingAuthors"
+                filter
               />
               <Button
                 class="tw-h-10"
@@ -175,8 +204,13 @@ const onSubmit = handleSubmit(async (values: IBook) => {
               :options="pdfFiles ? pdfFiles : undefined"
               :loading="loadingPdfFiles"
               :virtualScrollerOptions="{ itemSize: 38 }"
+              filter
             />
-            <Button label="Get Metadata" />
+            <Button
+              label="Get Metadata"
+              @click="getMetadata()"
+              :loading="loadingMetadata"
+            />
             <div class="tw-flex tw-gap-2">
               <CustomInputNumberField
                 class="tw-w-full"
@@ -207,7 +241,7 @@ const onSubmit = handleSubmit(async (values: IBook) => {
             name="tags"
             label="Tags"
             dataKey="_id"
-            placeholder="How many words in pdf file"
+            placeholder="Select books tags"
             :options="tags?.data"
             :loading="loadingTags"
             options-label="tag"

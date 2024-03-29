@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     public: {
       token: process.env.BACKEND_REST_API_TOKEN,
       apiUrl: process.env.BACKEND_REST_API_URL,
+      metadataExtractorUrl: process.env.METADATA_EXTRACTOR_URL,
     },
     githubClientId: process.env.GITHUB_ID,
     githubClientSecret: process.env.GITHUB_SECRET,
