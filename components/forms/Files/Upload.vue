@@ -39,7 +39,7 @@ const onErrorEvent = (err: FileUploadErrorEvent) => {
         @upload="onAdvancedUpload()"
         :multiple="true"
         accept="application/pdf"
-        :maxFileSize="1000000"
+        :maxFileSize="1024 * 1024 * 10"
         @error="onErrorEvent"
       >
         <template #empty>
