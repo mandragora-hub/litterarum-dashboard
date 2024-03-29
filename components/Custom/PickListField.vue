@@ -19,12 +19,12 @@ watch(
     if (!props.options) return;
     const availableArray = [];
     for (const option of props.options) {
-      if (!value.value.some((el) => el === option)) {
+      if (!value.value.some((el) => el._id === option._id)) {
         availableArray.push(option);
       }
     }
 
-    picklistValue.value = [availableArray, []];
+    picklistValue.value = [availableArray, value.value];
   }
 );
 
