@@ -32,6 +32,7 @@ export interface IAuthor {
   name: string;
   alias: string;
   photoUrl: string;
+  biography?: string;
 }
 
 export interface IBook {

@@ -23,6 +23,7 @@ const { handleSubmit } = useForm<IAuthor>({
     name: "",
     alias: undefined,
     photoUrl: "",
+    biography: undefined,
     ...props.editAuthor,
     _id: undefined,
   },
@@ -66,6 +67,11 @@ const onSubmit = handleSubmit(async (values: IAuthor) => {
           name="photoUrl"
           label="Photo URL"
           placeholder="Photo URL"
+        />
+        <CustomTextareaField
+          name="biography"
+          label="Biography"
+          placeholder="Brief description about the author's life"
         />
       </div>
       <Divider />
