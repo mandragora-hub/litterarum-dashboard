@@ -78,7 +78,7 @@ const { handleSubmit, setValues, values } = useForm<IBook>({
     publicationDate: "", // 431-213 BC, 1982
     isbn: undefined,
     ...props.editBook,
-    ...editBookAuthor.value
+    ...editBookAuthor.value,
   },
   validationSchema: toTypedSchema(validationUtils.generics.bookSchema()),
 });
@@ -107,13 +107,12 @@ const onSubmit = handleSubmit(async (values: IBook) => {
 const { pending: loadingMetadata, execute: getMetadata } =
   await useLazyAsyncData(() => {
     if (!values.pdfFile) return Promise.resolve();
-    return $fetch("api/v1/files/pdf", {
+    return $fetch(`metadata/?url=${values.pdfFile}`, {
       baseURL: config.public.metadataExtractorUrl,
-      method: "POST",
+      method: "GET",
       immediate: false,
       server: false,
-      body: { fileUrl: values.pdfFile },
-      timeout: 60 * 60 * 1000,
+      timeout: 500 * 1000, // 500s timeout
       onResponse: (r) => {
         const { pages, wordCount, readTime, metadata } = r.response._data;
         setValues({
@@ -211,6 +210,10 @@ const { pending: loadingMetadata, execute: getMetadata } =
               @click="getMetadata()"
               :loading="loadingMetadata"
             />
+            <Message severity="warn"
+              >Get metadata could be a expensive operation and It may take a
+              long time to respond.</Message
+            >
             <div class="tw-flex tw-gap-2">
               <CustomInputNumberField
                 class="tw-w-full"
