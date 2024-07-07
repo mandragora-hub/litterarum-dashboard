@@ -1,4 +1,3 @@
-version: '3'
 
 services:
   litterarum-dashboard:
@@ -8,3 +7,11 @@ services:
       context: .
     ports:
     - 3000:3000    
+    environment:
+      - BACKEND_REST_API_URL=${BACKEND_REST_API_URL}
+      - BACKEND_REST_API_TOKEN=${BACKEND_REST_API_TOKEN}
+      - METADATA_EXTRACTOR_URL=${METADATA_EXTRACTOR_URL}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - GITHUB_ID=${GITHUB_ID}
+      - GITHUB_SECRET=${GITHUB_SECRET}
+      - HOST=${HOST}
